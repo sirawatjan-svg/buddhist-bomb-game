@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<title>กู้ระเบิดพุทธประวัติหรรษา</title>
+<style>
+  :root{
+    --bg:#fffaf0; --bg2:#fff1d6; --panel:#ffffff; --panel2:#fff8ea;
+    --line:#eadfc6; --line2:#ddcda6;
+    --text:#43351d; --dim:#94825e;
+    --gold:#f2a413; --gold2:#ffc93c; --gold-dim:#d98a00;
+    --red:#e5484d; --red2:#d02a30;
+    --green:#2eaf62; --green2:#1c8a4d;
+    --shadow:0 14px 30px rgba(163,120,32,.16);
+    --radius:14px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    background:
+      radial-gradient(1100px 600px at 50% -10%, #ffe9b8 0%, var(--bg) 58%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Leelawadee UI','Noto Sans Thai','Sarabun','Thonburi',system-ui,sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  [hidden]{display:none !important;}
+  button{font-family:inherit;}
+
+  /* ---------- shell ---------- */
+  .wrap{max-width:920px; margin:0 auto; padding:22px 16px 60px;}
+  .hazard{
+    height:10px; border-radius:99px; margin:0 auto 20px; max-width:920px;
+    background:repeating-linear-gradient(-45deg, var(--gold) 0 14px, #fff3d8 14px 28px);
+    opacity:.9;
+    box-shadow:0 2px 10px rgba(242,164,19,.25);
+  }
+
+  /* ---------- start screen ---------- */
+  .brief{
+    background:linear-gradient(170deg, var(--panel) 0%, var(--bg2) 100%);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:38px 30px 34px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .brief::before{
+    content:""; position:absolute; inset:auto 0 0 0; height:6px;
+    background:repeating-linear-gradient(-45deg, var(--gold) 0 12px, transparent 12px 24px);
+    opacity:.5;
+  }
+  .badge{width:120px; height:120px; margin:0 auto 14px; display:block;}
+  .eyebrow{
+    font-size:.8rem; letter-spacing:.35em; color:var(--gold-dim);
+    text-transform:uppercase; margin:0 0 8px;
+  }
+  h1.title{
+    font-size:clamp(1.7rem, 5.4vw, 2.7rem);
+    margin:0 0 6px; line-height:1.25; text-wrap:balance;
+    color:var(--text);
+  }
+  h1.title .hl{color:var(--gold-dim);}
+  .subtitle{color:var(--dim); margin:0 auto 30px; max-width:34em; font-size:1rem;}
+
+  .field-label{
+    font-size:.85rem; letter-spacing:.22em; color:var(--dim);
+    margin:0 0 12px;
+  }
+  .seg{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:30px;}
+  .seg button{
+    background:var(--panel2); color:var(--text);
+    border:1px solid var(--line2); border-radius:10px;
+    padding:12px 22px; font-size:1.05rem; cursor:pointer;
+    transition:transform .12s ease, border-color .12s ease, background .12s ease;
+    font-variant-numeric:tabular-nums;
+  }
+  .seg button:hover{transform:translateY(-2px); border-color:var(--gold-dim);}
+  .seg button:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  .seg button.on{
+    background:linear-gradient(180deg, var(--gold) 0%, #d99c1c 100%);
+    color:#221a05; border-color:var(--gold);
+    font-weight:700;
+    box-shadow:0 4px 18px rgba(242,182,50,.35);
+  }
+
+  .start-actions{display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+  .btn{
+    border-radius:12px; cursor:pointer; font-size:1.05rem;
+    padding:14px 30px; border:1px solid var(--line2);
+    background:var(--panel2); color:var(--text);
+    transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  .btn-primary{
+    background:linear-gradient(180deg, var(--gold2) 0%, var(--gold) 45%, #cf941a 100%);
+    color:#241a04; font-weight:800; border-color:#b9861a;
+    font-size:1.2rem; padding:15px 44px;
+    box-shadow:0 6px 22px rgba(242,182,50,.4);
+  }
+  .btn-primary:hover{filter:brightness(1.06); transform:translateY(-2px);}
+  .btn-ghost{background:transparent;}
+
+  /* ---------- HUD ---------- */
+  .hud{
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+    gap:14px; margin-bottom:20px;
+  }
+  .hud-cell{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:10px 16px;
+  }
+  .hud-label{font-size:.72rem; letter-spacing:.22em; color:var(--dim); margin-bottom:2px;}
+  .hud-value{font-size:1.5rem; font-weight:700; font-variant-numeric:tabular-nums;}
+  .hud-value .unit{font-size:.85rem; color:var(--dim); font-weight:400;}
+  #hud-score .hud-value{color:var(--gold-dim);}
+  #hud-progress{text-align:right;}
+  #hud-progress .hud-value{color:var(--green2);}
+
+  .clock{
+    background:#242b3a; border:1px solid #3a4459; border-radius:12px;
+    padding:8px 26px 10px; text-align:center; min-width:170px;
+    box-shadow:inset 0 0 18px rgba(0,0,0,.55), 0 6px 16px rgba(163,120,32,.3);
+  }
+  .clock .hud-label{color:var(--gold);}
+  #timer{
+    font-family:Consolas,'Courier New',monospace;
+    font-size:clamp(1.9rem, 6vw, 2.6rem); font-weight:700; line-height:1.05;
+    color:var(--gold2); letter-spacing:.06em;
+    text-shadow:0 0 14px rgba(255,209,102,.55);
+    font-variant-numeric:tabular-nums;
+  }
+  .clock.low #timer{color:#ff6b6f; text-shadow:0 0 16px rgba(229,72,77,.7); animation:blink 1s steps(2,start) infinite;}
+  @keyframes blink{50%{opacity:.55;}}
+
+  /* ---------- grid / tiles ---------- */
+  .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  .tile{
+    position:relative; aspect-ratio:1/1; border-radius:12px;
+    border:1px solid #e6a93e; cursor:pointer; padding:0;
+    background:
+      radial-gradient(circle 5px at 12% 12%, #d9a44e 0 3px, transparent 4px),
+      radial-gradient(circle 5px at 88% 12%, #d9a44e 0 3px, transparent 4px),
+      radial-gradient(circle 5px at 12% 88%, #d9a44e 0 3px, transparent 4px),
+      radial-gradient(circle 5px at 88% 88%, #d9a44e 0 3px, transparent 4px),
+      linear-gradient(148deg, #ffe3a1 0%, #ffd070 60%, #f8bf55 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 6px 14px rgba(163,120,32,.28);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .12s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .tile:not(:disabled):hover{
+    transform:translateY(-3px);
+    border-color:var(--gold-dim);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 10px 20px rgba(163,120,32,.35), 0 0 0 1px rgba(217,138,0,.35);
+  }
+  .tile:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+  .tile .num{
+    font-size:clamp(1.6rem, 6vw, 2.4rem); font-weight:800; color:#8a5e14;
+    text-shadow:0 1px 0 rgba(255,255,255,.55);
+    font-variant-numeric:tabular-nums;
+  }
+  .tile.arming{animation:armPulse .34s ease-in-out infinite alternate; border-color:var(--gold);}
+  @keyframes armPulse{
+    from{box-shadow:0 0 6px rgba(242,182,50,.25), inset 0 0 10px rgba(242,182,50,.1);}
+    to{box-shadow:0 0 26px rgba(242,182,50,.75), inset 0 0 20px rgba(242,182,50,.3);}
+  }
+  .tile.safe{
+    cursor:default;
+    background:linear-gradient(150deg, #2c8f58 0%, #1d6c40 70%);
+    border-color:#3fae6d;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.15), 0 0 22px rgba(67,196,118,.35);
+  }
+  .tile.boom{
+    cursor:default;
+    background:radial-gradient(circle at 50% 45%, #5a1416 0%, #2b0a0c 75%);
+    border-color:var(--red);
+    box-shadow:inset 0 0 26px rgba(0,0,0,.8), 0 0 26px rgba(229,72,77,.45);
+  }
+  .tile svg.icon{width:52%; height:52%;}
+  .tile .plus5{
+    position:absolute; top:8%; right:10%;
+    font-weight:800; color:#eafff2; font-size:1rem;
+    animation:floatUp 1.2s ease-out forwards;
+    text-shadow:0 0 10px rgba(67,196,118,.9);
+  }
+  @keyframes floatUp{
+    0%{opacity:0; transform:translateY(8px) scale(.8);}
+    25%{opacity:1;}
+    100%{opacity:0; transform:translateY(-26px) scale(1.15);}
+  }
+
+  /* ---------- modals ---------- */
+  .overlay{
+    position:fixed; inset:0; z-index:40;
+    background:rgba(94,72,25,.42); backdrop-filter:blur(3px);
+    display:flex; align-items:center; justify-content:center;
+    padding:18px;
+  }
+  .modal{
+    background:linear-gradient(175deg, var(--panel) 0%, var(--bg2) 100%);
+    border:1px solid var(--line2); border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    max-width:600px; width:100%;
+    padding:26px 26px 24px;
+    animation:pop .22s ease-out;
+    max-height:88vh; overflow-y:auto;
+  }
+  @keyframes pop{from{transform:scale(.92); opacity:0;} to{transform:scale(1); opacity:1;}}
+  .modal-tag{
+    display:inline-block; font-size:.75rem; letter-spacing:.28em;
+    color:var(--gold-dim); border:1px solid #e3bd6b;
+    padding:4px 12px; border-radius:99px; margin-bottom:14px;
+  }
+  .q-text{font-size:1.25rem; font-weight:700; margin:0 0 20px; line-height:1.55; text-wrap:balance;}
+  .choices{display:grid; gap:10px;}
+  .choice{
+    text-align:left; font-size:1.05rem; padding:13px 16px;
+    background:var(--panel2); color:var(--text);
+    border:1px solid var(--line2); border-radius:10px; cursor:pointer;
+    transition:transform .1s ease, border-color .1s ease, background .1s ease;
+    display:flex; gap:12px; align-items:baseline;
+  }
+  .choice:not(:disabled):hover{transform:translateX(4px); border-color:var(--gold-dim);}
+  .choice:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  .choice .key{
+    color:var(--gold-dim); font-weight:800; min-width:1.2em;
+  }
+  .choice.right{background:#dcf5e5; border-color:var(--green); color:#14532d; font-weight:700;}
+  .choice.wrongpick{background:#ffe3e4; border-color:var(--red); color:#8f1d21; font-weight:700;}
+  .choice:disabled{cursor:default; opacity:.92;}
+  .verdict{
+    margin:16px 0 0; text-align:center; font-size:1.1rem; font-weight:800; min-height:1.6em;
+  }
+  .verdict.ok{color:var(--green2);}
+  .verdict.no{color:var(--red2);}
+
+  /* rules */
+  .rules{line-height:1.9; color:var(--text); font-size:1rem; padding-left:1.3em; margin:0 0 6px;}
+  .rules li{margin-bottom:6px;}
+  .rules b{color:var(--gold-dim);}
+  .modal h2{margin:0 0 14px; font-size:1.35rem;}
+  .modal-close-row{text-align:center; margin-top:18px;}
+
+  /* ---------- end screen ---------- */
+  .end-icon{width:110px; height:110px; margin:0 auto 8px; display:block;}
+  .end-head{font-size:clamp(1.5rem,5vw,2.1rem); font-weight:800; text-align:center; margin:0 0 4px;}
+  .end-head.win{color:var(--green2);}
+  .end-head.lose{color:var(--red2);}
+  .end-head.timeout{color:var(--gold-dim);}
+  .end-sub{text-align:center; color:var(--dim); margin:0 0 22px;}
+  .score-big{
+    text-align:center; margin:0 0 22px;
+  }
+  .score-big .n{
+    font-size:clamp(3rem,11vw,4.4rem); font-weight:800; color:var(--gold-dim);
+    font-variant-numeric:tabular-nums; line-height:1;
+  }
+  .score-big .cap{color:var(--dim); font-size:.95rem; letter-spacing:.18em;}
+  .stats{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:26px;
+  }
+  .stat{
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    padding:12px 14px; text-align:center;
+  }
+  .stat .k{font-size:.78rem; color:var(--dim); letter-spacing:.12em; margin-bottom:4px;}
+  .stat .v{font-size:1.3rem; font-weight:700; font-variant-numeric:tabular-nums;}
+  .end-actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+
+  /* ---------- fx ---------- */
+  #fx{position:fixed; inset:0; z-index:60; pointer-events:none; display:none;}
+  #flash{
+    position:fixed; inset:0; z-index:55; pointer-events:none; opacity:0;
+    background:radial-gradient(circle at 50% 55%, #ffd9a0 0%, #ff7b3a 35%, rgba(120,20,10,.9) 70%);
+  }
+  #flash.go{animation:flashout .9s ease-out forwards;}
+  @keyframes flashout{0%{opacity:.95;} 100%{opacity:0;}}
+  body.shake{animation:shake .55s ease-in-out;}
+  @keyframes shake{
+    0%,100%{transform:translate(0,0);}
+    12%{transform:translate(-13px,6px) rotate(-.6deg);}
+    25%{transform:translate(11px,-8px) rotate(.5deg);}
+    40%{transform:translate(-9px,-5px);}
+    55%{transform:translate(8px,7px) rotate(.4deg);}
+    70%{transform:translate(-6px,3px);}
+    85%{transform:translate(4px,-2px);}
+  }
+
+  /* mute */
+  #mute{
+    position:fixed; top:14px; right:14px; z-index:70;
+    width:44px; height:44px; border-radius:50%;
+    background:var(--panel2); border:1px solid var(--line2);
+    color:var(--gold-dim); cursor:pointer; font-size:1.15rem;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 14px rgba(163,120,32,.25);
+  }
+  #mute:hover{border-color:var(--gold-dim);}
+  #mute:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+
+  @media (max-width:640px){
+    .grid{grid-template-columns:repeat(3,1fr); gap:10px;}
+    .hud{grid-template-columns:1fr 1fr; }
+    .clock{grid-column:1 / -1; order:-1;}
+    #hud-progress{text-align:left;}
+    .modal{padding:20px 18px 18px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001s !important; transition-duration:.001s !important;}
+  }
+</style>
+
+<div class="wrap">
+  <div class="hazard" aria-hidden="true"></div>
+
+  <!-- ===================== START SCREEN ===================== -->
+  <section id="screen-start" class="brief">
+    <svg class="badge" viewBox="0 0 120 120" aria-hidden="true">
+      <circle cx="60" cy="60" r="56" fill="none" stroke="#f2b632" stroke-width="3"/>
+      <circle cx="60" cy="60" r="49" fill="#fff6e0" stroke="#e3cf9e" stroke-width="1.5"/>
+      <!-- bomb -->
+      <circle cx="57" cy="68" r="22" fill="#232d3b" stroke="#4d5a70" stroke-width="2"/>
+      <circle cx="50" cy="61" r="6" fill="#39465a" opacity=".8"/>
+      <rect x="60" y="38" width="12" height="9" rx="2" fill="#4d5a70" transform="rotate(28 66 42)"/>
+      <path d="M72 38 Q80 28 90 33" fill="none" stroke="#f2b632" stroke-width="3" stroke-linecap="round"/>
+      <!-- spark -->
+      <g fill="#f2a413">
+        <path d="M92 32 L95 25 L97 32 L104 34 L97 37 L95 44 L92 37 L86 34 Z"/>
+      </g>
+      <!-- lotus at base -->
+      <g fill="#f2b632">
+        <path d="M60 104 Q56 96 60 90 Q64 96 60 104 Z"/>
+        <path d="M50 103 Q49 95 55 92 Q57 99 50 103 Z"/>
+        <path d="M70 103 Q71 95 65 92 Q63 99 70 103 Z"/>
+      </g>
+    </svg>
+    <p class="eyebrow">Mission Briefing</p>
+    <h1 class="title">กู้ระเบิด<span class="hl">พุทธประวัติ</span>หรรษา</h1>
+    <p class="subtitle">ตอบคำถามพุทธประวัติและอริยสาวกให้ถูก เพื่อเปิดฝานิรภัยทั้ง 12 ช่อง<br>แต่ระวัง! มีระเบิดซ่อนอยู่ 2 ลูก… เปิดเจอเมื่อไหร่ ภารกิจจบทันที</p>
+
+    <p class="field-label">⏱ เลือกเวลากู้ระเบิด</p>
+    <div class="seg" id="time-seg" role="group" aria-label="เลือกเวลากู้ระเบิด">
+      <button data-min="3">3 นาที</button>
+      <button data-min="5" class="on">5 นาที</button>
+      <button data-min="8">8 นาที</button>
+      <button data-min="10">10 นาที</button>
+    </div>
+
+    <div class="start-actions">
+      <button class="btn btn-ghost" id="btn-rules">📋 กติกาของเกม</button>
+      <button class="btn btn-primary" id="btn-start">🚨 เริ่มภารกิจ</button>
+    </div>
+  </section>
+
+  <!-- ===================== GAME SCREEN ===================== -->
+  <section id="screen-game" hidden>
+    <div class="hud">
+      <div class="hud-cell" id="hud-score">
+        <div class="hud-label">คะแนนสะสม</div>
+        <div class="hud-value"><span id="score">0</span> <span class="unit">คะแนน</span></div>
+      </div>
+      <div class="clock" id="clock">
+        <div class="hud-label">เวลาที่เหลือ</div>
+        <div id="timer">05:00</div>
+      </div>
+      <div class="hud-cell" id="hud-progress">
+        <div class="hud-label">กู้สำเร็จ</div>
+        <div class="hud-value"><span id="defused">0</span><span class="unit">/10 ช่อง</span></div>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+</div>
+
+<!-- ===================== RULES MODAL ===================== -->
+<div class="overlay" id="rules-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rules-title">
+    <span class="modal-tag">RULES</span>
+    <h2 id="rules-title">กติกาของเกม</h2>
+    <ol class="rules">
+      <li>มีฝานิรภัยทั้งหมด <b>12 ช่อง</b> — ปลอดภัย 10 ช่อง และมี<b>ระเบิดซ่อนอยู่ 2 ลูก</b> (สุ่มตำแหน่งทุกเกม)</li>
+      <li>กดเลือกช่องใดก็ได้ จะมี<b>คำถามพุทธประวัติ</b>ขึ้นมาให้ตอบ</li>
+      <li><b>ตอบถูก</b> → ฝาช่องจะเปิดออก… ลุ้นว่าข้างในคืออะไร!
+        <br>ถ้าเป็นช่องปลอดภัย (สีเขียว) รับไปเลย <b>+5 คะแนน</b></li>
+      <li><b>ตอบผิด</b> → ฝาช่องไม่เปิด เสียโอกาสไปหนึ่งครั้ง เลือกช่องใหม่ได้เลย</li>
+      <li>ถ้าเปิดเจอ<b>ระเบิด</b> 💥 เกมจบทันที!</li>
+      <li>ถ้า<b>เวลาหมด</b> ระเบิดที่เหลือจะระเบิดเอง เกมจบเช่นกัน</li>
+      <li><b>ชนะ</b> เมื่อกู้ครบทั้ง 10 ช่องปลอดภัย (50 คะแนนเต็ม)
+        <br>ถ้าเล่นแข่งกันหลายคน ใครสะสมคะแนนได้มากที่สุดเป็นผู้ชนะ</li>
+    </ol>
+    <div class="modal-close-row">
+      <button class="btn btn-primary" id="btn-rules-close">เข้าใจแล้ว!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== QUESTION MODAL ===================== -->
+<div class="overlay" id="q-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="q-text">
+    <span class="modal-tag" id="q-tag">ช่องที่ 1</span>
+    <p class="q-text" id="q-text"></p>
+    <div class="choices" id="q-choices"></div>
+    <p class="verdict" id="q-verdict"></p>
+  </div>
+</div>
+
+<!-- ===================== END MODAL ===================== -->
+<div class="overlay" id="end-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="end-head">
+    <div id="end-icon-wrap"></div>
+    <p class="end-head" id="end-head"></p>
+    <p class="end-sub" id="end-sub"></p>
+    <div class="score-big">
+      <div class="n" id="end-score">0</div>
+      <div class="cap">คะแนนรวม</div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">กู้สำเร็จ</div><div class="v" id="end-defused">0/10 ช่อง</div></div>
+      <div class="stat"><div class="k">เวลาที่ใช้</div><div class="v" id="end-time">0:00</div></div>
+    </div>
+    <div class="end-actions">
+      <button class="btn btn-primary" id="btn-again">🔄 เล่นอีกครั้ง</button>
+    </div>
+  </div>
+</div>
+
+<button id="mute" aria-label="เปิด/ปิดเสียง" title="เปิด/ปิดเสียง">🔊</button>
+<canvas id="fx"></canvas>
+<div id="flash"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   กู้ระเบิดพุทธประวัติหรรษา — Buddhist History Bomb-Defusal Quiz Game
+   ===================================================================== */
+
+/* ---------------- Question bank (30 ข้อ) ---------------- */
+const QUESTIONS = [
+  {q:'เจ้าชายสิทธัตถะประสูติ (เกิด) ที่ใด?', a:'สวนลุมพินีวัน', w:['ป่าอิสิปตนมฤคทายวัน','เมืองพาราณสี','ตำบลอุรุเวลาเสนานิคม']},
+  {q:'พระพุทธเจ้าตรัสรู้ใต้ต้นไม้อะไร?', a:'ต้นโพธิ์', w:['ต้นไทร','ต้นสาละ','ต้นมะม่วง']},
+  {q:'พระบิดา (พ่อ) ของเจ้าชายสิทธัตถะคือใคร?', a:'พระเจ้าสุทโธทนะ', w:['พระเจ้าพิมพิสาร','พระเจ้าปเสนทิโกศล','พระเจ้าอชาตศัตรู']},
+  {q:'พระมารดา (แม่) ของเจ้าชายสิทธัตถะคือใคร?', a:'พระนางสิริมหามายา', w:['พระนางยโสธรา','พระนางมหาปชาบดีโคตมี','พระนางมัลลิกา']},
+  {q:'เจ้าชายสิทธัตถะเสด็จออกผนวช (บวช) เมื่อพระชนมายุกี่พรรษา?', a:'29 พรรษา', w:['16 พรรษา','35 พรรษา','45 พรรษา']},
+  {q:'พระพุทธเจ้าตรัสรู้เมื่อพระชนมายุกี่พรรษา?', a:'35 พรรษา', w:['29 พรรษา','40 พรรษา','80 พรรษา']},
+  {q:'พระพุทธเจ้าเสด็จดับขันธปรินิพพานเมื่อพระชนมายุกี่พรรษา?', a:'80 พรรษา', w:['60 พรรษา','75 พรรษา','90 พรรษา']},
+  {q:'ม้าทรงที่พาเจ้าชายสิทธัตถะออกผนวชชื่อว่าอะไร?', a:'ม้ากัณฐกะ', w:['ม้าวลาหก','ม้าสินธพ','ม้าอัศวราช']},
+  {q:'มหาดเล็กคนสนิทที่ตามเสด็จเจ้าชายสิทธัตถะออกผนวชคือใคร?', a:'นายฉันนะ', w:['นายจุนทะ','นายตปุสสะ','นายภัลลิกะ']},
+  {q:'พระพุทธเจ้าทรงแสดงปฐมเทศนา (เทศน์ครั้งแรก) แก่ใคร?', a:'ปัญจวัคคีย์', w:['ชฎิลสามพี่น้อง','พระเจ้าพิมพิสาร','นางสุชาดา']},
+  {q:'ปฐมเทศนาของพระพุทธเจ้ามีชื่อว่าอะไร?', a:'ธัมมจักกัปปวัตตนสูตร', w:['อนัตตลักขณสูตร','มงคลสูตร','กรณียเมตตสูตร']},
+  {q:'พระสงฆ์รูปแรกในพระพุทธศาสนาคือใคร?', a:'พระอัญญาโกณฑัญญะ', w:['พระสารีบุตร','พระอานนท์','พระมหากัสสปะ']},
+  {q:'วันประสูติ ตรัสรู้ และปรินิพพานของพระพุทธเจ้า ตรงกับวันสำคัญใด?', a:'วันวิสาขบูชา', w:['วันมาฆบูชา','วันอาสาฬหบูชา','วันเข้าพรรษา']},
+  {q:'อัครสาวกเบื้องขวาของพระพุทธเจ้าคือใคร?', a:'พระสารีบุตร', w:['พระโมคคัลลานะ','พระอานนท์','พระราหุล']},
+  {q:'อัครสาวกเบื้องซ้ายของพระพุทธเจ้าคือใคร?', a:'พระโมคคัลลานะ', w:['พระสารีบุตร','พระมหากัสสปะ','พระอุบาลี']},
+  {q:'พระสาวกที่ได้รับยกย่องว่าเป็นเลิศด้าน "ปัญญา" คือใคร?', a:'พระสารีบุตร', w:['พระอานนท์','พระสีวลี','พระราหุล']},
+  {q:'พระสาวกที่ได้รับยกย่องว่าเป็นเลิศด้าน "มีฤทธิ์มาก" คือใคร?', a:'พระโมคคัลลานะ', w:['พระสารีบุตร','พระองคุลิมาล','พระอัสสชิ']},
+  {q:'พระอุปัฏฐาก (ผู้รับใช้ใกล้ชิด) ของพระพุทธเจ้าคือใคร?', a:'พระอานนท์', w:['พระสารีบุตร','พระราหุล','พระอนุรุทธะ']},
+  {q:'ใครเป็นประธานในการสังคายนาพระธรรมวินัยครั้งแรก?', a:'พระมหากัสสปะ', w:['พระอานนท์','พระอุบาลี','พระสารีบุตร']},
+  {q:'พระราหุลเกี่ยวข้องกับพระพุทธเจ้าอย่างไร?', a:'เป็นพระโอรส (ลูกชาย)', w:['เป็นพระอนุชา (น้องชาย)','เป็นลูกพี่ลูกน้อง','เป็นพระสหายสนิท']},
+  {q:'พระมเหสี (ภรรยา) ของเจ้าชายสิทธัตถะคือใคร?', a:'พระนางยโสธรา (พิมพา)', w:['พระนางสิริมหามายา','พระนางมหาปชาบดี','พระนางสามาวดี']},
+  {q:'ภิกษุณีรูปแรกในพระพุทธศาสนาคือใคร?', a:'พระนางมหาปชาบดีโคตมี', w:['พระนางยโสธรา','นางวิสาขา','นางสุชาดา']},
+  {q:'โจรร้ายที่กลับใจมาบวชจนสำเร็จเป็นพระอรหันต์คือใคร?', a:'องคุลิมาล', w:['พระเทวทัต','พระเจ้าอชาตศัตรู','วัสสการพราหมณ์']},
+  {q:'พระพุทธเจ้าเสด็จดับขันธปรินิพพานที่เมืองใด?', a:'เมืองกุสินารา', w:['เมืองพาราณสี','เมืองราชคฤห์','เมืองสาวัตถี']},
+  {q:'พระพุทธเจ้าตรัสรู้ที่ริมฝั่งแม่น้ำใด?', a:'แม่น้ำเนรัญชรา', w:['แม่น้ำคงคา','แม่น้ำยมุนา','แม่น้ำสินธุ']},
+  {q:'ใครเป็นผู้ถวายข้าวมธุปายาสแด่พระพุทธเจ้าก่อนตรัสรู้?', a:'นางสุชาดา', w:['นางวิสาขา','พระนางมัลลิกา','นางอัมพปาลี']},
+  {q:'พระนามว่า "สิทธัตถะ" มีความหมายว่าอย่างไร?', a:'ผู้สำเร็จสมความปรารถนา', w:['ผู้มีปัญญาเป็นเลิศ','ผู้ชนะสิบทิศ','ผู้มีความเพียรยิ่ง']},
+  {q:'เทวทูต 4 ที่ทำให้เจ้าชายสิทธัตถะตัดสินใจออกผนวช คือ คนแก่ คนเจ็บ คนตาย และอะไร?', a:'สมณะ (นักบวช)', w:['เทวดา','พราหมณ์','กษัตริย์']},
+  {q:'ใครเป็นผู้ถวายภัตตาหารมื้อสุดท้ายแด่พระพุทธเจ้า?', a:'นายจุนทะ', w:['นายฉันนะ','อนาถบิณฑิกเศรษฐี','หมอชีวกโกมารภัจจ์']},
+  {q:'หลังตรัสรู้ พระพุทธเจ้าทรงเผยแผ่พระธรรมนานประมาณกี่ปี?', a:'45 ปี', w:['25 ปี','35 ปี','60 ปี']}
+];
+
+/* ---------------- Audio engine (Web Audio, no external files) ---------------- */
+const AudioFX = {
+  ctx:null, master:null, musicGain:null, muted:false,
+  musicTimer:null, step:0, nextTime:0, tension:false,
+
+  init(){
+    if(this.ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    this.ctx = new AC();
+    this.master = this.ctx.createGain();
+    this.master.gain.value = this.muted ? 0 : 0.9;
+    this.master.connect(this.ctx.destination);
+    this.musicGain = this.ctx.createGain();
+    this.musicGain.gain.value = 0.20;
+    this.musicGain.connect(this.master);
+  },
+  resume(){ this.init(); if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
+  setMuted(m){
+    this.muted = m;
+    if(this.master) this.master.gain.value = m ? 0 : 0.9;
+  },
+
+  tone(freq, dur, type, gain, when, dest, slideTo){
+    if(!this.ctx) return;
+    const t = this.ctx.currentTime + (when || 0);
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, t);
+    if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain || 0.3, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(dest || this.master);
+    o.start(t); o.stop(t + dur + 0.05);
+  },
+  noiseBurst(dur, gain, fStart, fEnd, when, dest){
+    if(!this.ctx) return;
+    const t = this.ctx.currentTime + (when || 0);
+    const len = Math.max(1, Math.floor(this.ctx.sampleRate * dur));
+    const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<len;i++) d[i] = Math.random()*2-1;
+    const src = this.ctx.createBufferSource(); src.buffer = buf;
+    const f = this.ctx.createBiquadFilter(); f.type = 'lowpass';
+    f.frequency.setValueAtTime(fStart, t);
+    f.frequency.exponentialRampToValueAtTime(Math.max(40,fEnd), t + dur);
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(gain, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(dest || this.master);
+    src.start(t); src.stop(t + dur + 0.05);
+  },
+  tick(when, gain, freq, dest){
+    if(!this.ctx) return;
+    const t = this.ctx.currentTime + (when || 0);
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = 'square'; o.frequency.value = freq || 1900;
+    g.gain.setValueAtTime(gain || 0.06, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+    o.connect(g); g.connect(dest || this.master);
+    o.start(t); o.stop(t + 0.06);
+  },
+
+  /* ---- one-shot effects ---- */
+  click(){ this.tone(760, 0.06, 'triangle', 0.16); this.tone(1240, 0.045, 'sine', 0.07, 0.012); },
+  correct(){
+    [523.25, 659.25, 783.99].forEach((f,i)=> this.tone(f, 0.34, 'triangle', 0.24, i*0.09));
+    this.tone(1567.98, 0.5, 'sine', 0.1, 0.28);
+  },
+  wrong(){
+    this.tone(146, 0.34, 'square', 0.22);
+    this.tone(103, 0.4, 'square', 0.18, 0.03);
+    this.noiseBurst(0.18, 0.05, 900, 200, 0);
+  },
+  drumroll(dur){
+    if(!this.ctx) return;
+    let t = 0, iv = 0.13;
+    while(t < dur){
+      this.tick(t, 0.1, 1300 + Math.random()*500);
+      this.tick(t + 0.012, 0.04, 700);
+      t += iv;
+      iv = Math.max(0.038, iv * 0.9);
+    }
+    this.tone(90, dur, 'sawtooth', 0.05, 0, this.master, 190);
+  },
+  relief(){
+    this.noiseBurst(0.55, 0.09, 3200, 350, 0);
+    this.tone(392, 0.5, 'sine', 0.18, 0.18);
+    this.tone(523.25, 0.75, 'sine', 0.2, 0.34);
+    this.tone(659.25, 0.9, 'sine', 0.12, 0.5);
+  },
+  explosion(){
+    this.noiseBurst(1.4, 0.95, 7500, 55, 0);
+    this.tone(170, 1.15, 'sine', 0.85, 0, this.master, 32);
+    this.tone(58, 1.5, 'triangle', 0.5, 0.05, this.master, 26);
+    this.noiseBurst(0.35, 0.5, 12000, 2500, 0);
+  },
+  fanfare(){
+    const seq = [[523.25,0],[659.25,.13],[783.99,.26],[1046.5,.42]];
+    seq.forEach(([f,d])=> this.tone(f, 0.42, 'triangle', 0.24, d));
+    [523.25,659.25,783.99,1046.5].forEach(f=> this.tone(f, 1.15, 'sine', 0.1, 0.62));
+    this.tick(0.62, 0.08, 2400);
+  },
+
+  /* ---- tense background loop ---- */
+  startMusic(){
+    this.resume();
+    if(!this.ctx || this.musicTimer) return;
+    this.step = 0;
+    this.tension = false;
+    this.nextTime = this.ctx.currentTime + 0.1;
+    this.musicTimer = setInterval(()=>this._schedule(), 42);
+  },
+  stopMusic(){
+    if(this.musicTimer){ clearInterval(this.musicTimer); this.musicTimer = null; }
+  },
+  _schedule(){
+    if(!this.ctx) return;
+    while(this.nextTime < this.ctx.currentTime + 0.18){
+      this._playStep(this.step, this.nextTime - this.ctx.currentTime);
+      const bpm = this.tension ? 148 : 112;
+      this.nextTime += (60 / bpm) / 4;      // 16th notes
+      this.step = (this.step + 1) % 32;
+    }
+  },
+  _playStep(s, when){
+    const mg = this.musicGain;
+    // clock ticks
+    if(s % 4 === 0) this.tick(when, s % 16 === 0 ? 0.1 : 0.055, 1650, mg);
+    if(this.tension && s % 4 === 2) this.tick(when, 0.05, 2300, mg);
+    // heartbeat bass (D minor pedal)
+    if(s % 16 === 0)  this.tone(73.42, 0.32, 'sine', 0.85, when, mg);
+    if(s % 16 === 3)  this.tone(73.42, 0.22, 'sine', 0.5, when, mg);
+    if(s % 16 === 10) this.tone(65.41, 0.28, 'sine', 0.6, when, mg);
+    // sparse minor arpeggio
+    const arp = [293.66, 349.23, 440.0, 349.23];
+    if(s % 8 === 4){
+      const n = arp[Math.floor(s / 8) % 4] * (this.tension ? 2 : 1);
+      this.tone(n, 0.22, 'triangle', 0.12, when, mg);
+    }
+    // long dark drone once per cycle
+    if(s === 16){
+      this.tone(146.83, 3.2, 'sawtooth', 0.035, when, mg);
+      this.tone(155.56, 3.2, 'sawtooth', 0.028, when, mg); // dissonant rub
+    }
+  }
+};
+
+/* ---------------- Icons ---------------- */
+const ICON_LOTUS = `<svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
+  <g fill="#eafff2">
+    <path d="M32 50 Q24 36 32 22 Q40 36 32 50 Z"/>
+    <path d="M18 48 Q14 34 24 28 Q28 40 18 48 Z" opacity=".85"/>
+    <path d="M46 48 Q50 34 40 28 Q36 40 46 48 Z" opacity=".85"/>
+    <path d="M8 44 Q10 32 19 33 Q17 43 8 44 Z" opacity=".6"/>
+    <path d="M56 44 Q54 32 45 33 Q47 43 56 44 Z" opacity=".6"/>
+  </g>
+  <path d="M20 52 Q32 58 44 52" stroke="#eafff2" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>
+</svg>`;
+
+const ICON_BOMB = `<svg class="icon" viewBox="0 0 64 64" aria-hidden="true">
+  <circle cx="30" cy="38" r="18" fill="#16090a" stroke="#ff8a8d" stroke-width="2.5"/>
+  <circle cx="24" cy="32" r="5" fill="#3a1517"/>
+  <rect x="34" y="14" width="11" height="8" rx="2" fill="#5a2a2c" transform="rotate(28 39 18)"/>
+  <path d="M44 13 Q51 5 58 9" fill="none" stroke="#ffd166" stroke-width="3" stroke-linecap="round"/>
+  <path d="M58 8 L60 3 L62 8 L67 10 L62 12 L60 17 L58 12 L53 10 Z" fill="#ffd166" transform="translate(-4 0)"/>
+</svg>`;
+
+const END_ICONS = {
+  win: `<svg class="end-icon" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#43c476" stroke-width="4"/><path d="M38 62 L54 78 L84 44" fill="none" stroke="#7fe0a8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  bomb: `<svg class="end-icon" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#e5484d" stroke-width="4"/><g stroke="#ff6b6f" stroke-width="6" stroke-linecap="round"><path d="M60 28 L60 52"/><path d="M60 92 L60 68" opacity="0"/><path d="M36 40 L50 54"/><path d="M84 40 L70 54"/><path d="M30 66 L48 66"/><path d="M90 66 L72 66"/><path d="M42 88 L52 74"/><path d="M78 88 L68 74"/></g><circle cx="60" cy="66" r="10" fill="#ff6b6f"/></svg>`,
+  timeout: `<svg class="end-icon" viewBox="0 0 120 120"><circle cx="60" cy="64" r="44" fill="none" stroke="#f2b632" stroke-width="4"/><path d="M60 40 L60 66 L78 76" fill="none" stroke="#ffd166" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M48 14 L72 14" stroke="#f2b632" stroke-width="6" stroke-linecap="round"/><path d="M60 14 L60 22" stroke="#f2b632" stroke-width="6"/></svg>`
+};
+
+/* ---------------- Game state ---------------- */
+const TILE_COUNT = 12, BOMB_COUNT = 2, POINTS = 5;
+const SAFE_TOTAL = TILE_COUNT - BOMB_COUNT;
+
+const state = {
+  minutes: 5,
+  tiles: [],            // {hasBomb, opened, el}
+  deck: [], deckPos: 0, // shuffled question order
+  score: 0, defused: 0,
+  running: false, busy: false,
+  endTime: 0, totalMs: 0,
+  timerId: null,
+  currentTile: null
+};
+
+const $ = id => document.getElementById(id);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ---------------- Setup screen ---------------- */
+$('time-seg').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  AudioFX.resume(); AudioFX.click();
+  document.querySelectorAll('#time-seg button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  state.minutes = +b.dataset.min;
+});
+$('btn-rules').addEventListener('click', ()=>{ AudioFX.resume(); AudioFX.click(); $('rules-modal').hidden = false; });
+$('btn-rules-close').addEventListener('click', ()=>{ AudioFX.click(); $('rules-modal').hidden = true; });
+$('btn-start').addEventListener('click', startGame);
+$('btn-again').addEventListener('click', ()=>{
+  AudioFX.click();
+  $('end-modal').hidden = true;
+  $('screen-game').hidden = true;
+  $('screen-start').hidden = false;
+});
+$('mute').addEventListener('click', ()=>{
+  AudioFX.resume();
+  AudioFX.setMuted(!AudioFX.muted);
+  $('mute').textContent = AudioFX.muted ? '🔇' : '🔊';
+});
+
+/* ---------------- Game flow ---------------- */
+function startGame(){
+  AudioFX.resume(); AudioFX.click();
+
+  state.tiles = [];
+  state.score = 0; state.defused = 0;
+  state.busy = false; state.running = true;
+  state.deck = shuffle(QUESTIONS.map((_,i)=>i));
+  state.deckPos = 0;
+
+  // place 2 bombs at random
+  const bombSpots = new Set(shuffle([...Array(TILE_COUNT).keys()]).slice(0, BOMB_COUNT));
+
+  const grid = $('grid');
+  grid.innerHTML = '';
+  for(let i=0;i<TILE_COUNT;i++){
+    const b = document.createElement('button');
+    b.className = 'tile';
+    b.innerHTML = `<span class="num">${i+1}</span>`;
+    b.setAttribute('aria-label', `ช่องที่ ${i+1}`);
+    const tile = {hasBomb: bombSpots.has(i), opened:false, el:b};
+    b.addEventListener('click', ()=>pickTile(tile, i));
+    state.tiles.push(tile);
+    grid.appendChild(b);
+  }
+
+  $('score').textContent = '0';
+  $('defused').textContent = '0';
+  $('clock').classList.remove('low');
+
+  state.totalMs = state.minutes * 60000;
+  state.endTime = Date.now() + state.totalMs;
+  updateTimer();
+  clearInterval(state.timerId);
+  state.timerId = setInterval(updateTimer, 250);
+
+  $('screen-start').hidden = true;
+  $('screen-game').hidden = false;
+
+  AudioFX.stopMusic();
+  AudioFX.startMusic();
+}
+
+function updateTimer(){
+  const left = Math.max(0, state.endTime - Date.now());
+  const m = Math.floor(left/60000), s = Math.floor(left%60000/1000);
+  $('timer').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const lowNow = left <= Math.min(60000, state.totalMs * 0.25);
+  $('clock').classList.toggle('low', lowNow && left > 0);
+  AudioFX.tension = lowNow;
+  if(left <= 0 && state.running) timeUp();
+}
+
+function nextQuestion(){
+  if(state.deckPos >= state.deck.length){
+    state.deck = shuffle(state.deck);
+    state.deckPos = 0;
+  }
+  return QUESTIONS[state.deck[state.deckPos++]];
+}
+
+function pickTile(tile, idx){
+  if(!state.running || state.busy || tile.opened) return;
+  AudioFX.resume(); AudioFX.click();
+  state.busy = true;
+  state.currentTile = tile;
+  showQuestion(nextQuestion(), idx, tile);
+}
+
+function showQuestion(item, idx, tile){
+  $('q-tag').textContent = `ช่องที่ ${idx+1}`;
+  $('q-text').textContent = item.q;
+  const verdict = $('q-verdict');
+  verdict.textContent = ''; verdict.className = 'verdict';
+
+  const box = $('q-choices');
+  box.innerHTML = '';
+  const keys = ['ก','ข','ค','ง'];
+  const options = shuffle([item.a, ...item.w]);
+  options.forEach((opt,i)=>{
+    const b = document.createElement('button');
+    b.className = 'choice';
+    b.innerHTML = `<span class="key">${keys[i]}.</span><span>${opt}</span>`;
+    b.addEventListener('click', ()=>answer(b, opt === item.a, item.a, tile));
+    box.appendChild(b);
+  });
+  $('q-modal').hidden = false;
+}
+
+function answer(btn, isCorrect, correctText, tile){
+  const buttons = [...document.querySelectorAll('#q-choices .choice')];
+  buttons.forEach(b=>b.disabled = true);
+  const verdict = $('q-verdict');
+
+  if(isCorrect){
+    btn.classList.add('right');
+    verdict.textContent = 'ถูกต้อง! เตรียมเปิดฝานิรภัย…';
+    verdict.classList.add('ok');
+    AudioFX.correct();
+    setTimeout(()=>{ $('q-modal').hidden = true; armAndReveal(tile); }, 850);
+  }else{
+    btn.classList.add('wrongpick');
+    buttons.forEach(b=>{
+      if(b.textContent.includes(correctText)) b.classList.add('right');
+    });
+    verdict.textContent = 'ผิดจ้า! ฝาไม่เปิด เลือกช่องใหม่เลย';
+    verdict.classList.add('no');
+    AudioFX.wrong();
+    setTimeout(()=>{ $('q-modal').hidden = true; state.busy = false; }, 1500);
+  }
+}
+
+/* suspense: will it explode? */
+function armAndReveal(tile){
+  if(!state.running){ state.busy = false; return; }
+  const suspense = reduceMotion ? 400 : 1700;
+  tile.el.classList.add('arming');
+  AudioFX.drumroll(suspense/1000);
+  setTimeout(()=>{
+    tile.el.classList.remove('arming');
+    if(!state.running){ state.busy = false; return; }
+    tile.opened = true;
+    if(tile.hasBomb) explodeTile(tile);
+    else revealSafe(tile);
+  }, suspense);
+}
+
+function revealSafe(tile){
+  tile.el.classList.add('safe');
+  tile.el.innerHTML = ICON_LOTUS + '<span class="plus5">+5</span>';
+  tile.el.disabled = true;
+  AudioFX.relief();
+  state.score += POINTS;
+  state.defused += 1;
+  $('score').textContent = state.score;
+  $('defused').textContent = state.defused;
+  if(state.defused >= SAFE_TOTAL){
+    winGame();
+  }else{
+    state.busy = false;
+  }
+}
+
+function explodeTile(tile){
+  tile.el.classList.add('boom');
+  tile.el.innerHTML = ICON_BOMB;
+  tile.el.disabled = true;
+  bigBoomFX(tile.el);
+  endGame('bomb');
+}
+
+function revealAllBombs(){
+  state.tiles.forEach(t=>{
+    if(t.hasBomb && !t.opened){
+      t.opened = true;
+      t.el.classList.add('boom');
+      t.el.innerHTML = ICON_BOMB;
+      t.el.disabled = true;
+    }
+  });
+}
+
+function bigBoomFX(anchorEl){
+  AudioFX.explosion();
+  if(reduceMotion) return;
+  const flash = $('flash');
+  flash.classList.remove('go');
+  void flash.offsetWidth;           // restart animation
+  flash.classList.add('go');
+  document.body.classList.add('shake');
+  setTimeout(()=>document.body.classList.remove('shake'), 600);
+  if(anchorEl){
+    const r = anchorEl.getBoundingClientRect();
+    sparkBurst(r.left + r.width/2, r.top + r.height/2);
+  }
+}
+
+function timeUp(){
+  revealAllBombs();
+  bigBoomFX(state.tiles.find(t=>t.hasBomb)?.el);
+  endGame('timeout');
+}
+
+function winGame(){
+  state.running = false;
+  clearInterval(state.timerId);
+  AudioFX.stopMusic();
+  AudioFX.fanfare();
+  confetti();
+  setTimeout(()=>showEnd('win'), 900);
+}
+
+function endGame(reason){
+  state.running = false;
+  state.busy = true;
+  clearInterval(state.timerId);
+  AudioFX.stopMusic();
+  $('q-modal').hidden = true;
+  setTimeout(()=>showEnd(reason), reason === 'win' ? 400 : 1400);
+}
+
+function showEnd(reason){
+  const head = $('end-head');
+  head.className = 'end-head';
+  if(reason === 'win'){
+    head.classList.add('win');
+    head.textContent = 'ภารกิจสำเร็จ! กู้ระเบิดครบทุกช่อง 🎉';
+    $('end-sub').textContent = 'สุดยอดนักกู้ระเบิดพุทธประวัติตัวจริง!';
+    $('end-icon-wrap').innerHTML = END_ICONS.win;
+  }else if(reason === 'bomb'){
+    head.classList.add('lose');
+    head.textContent = 'บึ้ม!! เปิดเจอระเบิดเข้าแล้ว';
+    $('end-sub').textContent = 'ไม่เป็นไร เก็บคะแนนไว้แล้วลองใหม่อีกครั้ง!';
+    $('end-icon-wrap').innerHTML = END_ICONS.bomb;
+  }else{
+    head.classList.add('timeout');
+    head.textContent = 'หมดเวลา! ระเบิดทำงานแล้ว';
+    $('end-sub').textContent = 'ครั้งหน้าลองตอบให้ไวขึ้นอีกนิดนะ';
+    $('end-icon-wrap').innerHTML = END_ICONS.timeout;
+  }
+  $('end-score').textContent = state.score;
+  $('end-defused').textContent = `${state.defused}/${SAFE_TOTAL} ช่อง`;
+  const usedMs = reason === 'timeout' ? state.totalMs : Math.min(state.totalMs, state.totalMs - (state.endTime - Date.now()));
+  const um = Math.floor(usedMs/60000), us = Math.max(0, Math.floor(usedMs%60000/1000));
+  $('end-time').textContent = `${um}:${String(us).padStart(2,'0')} นาที`;
+  $('end-modal').hidden = false;
+}
+
+/* ---------------- Canvas FX ---------------- */
+function sparkBurst(x, y){
+  const cv = $('fx');
+  cv.width = innerWidth; cv.height = innerHeight;
+  cv.style.display = 'block';
+  const c = cv.getContext('2d');
+  const parts = [];
+  const colors = ['#ffd166','#ff9b3a','#ff6b6f','#fff3d0'];
+  for(let i=0;i<70;i++){
+    const a = Math.random()*Math.PI*2, sp = 3 + Math.random()*9;
+    parts.push({x, y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp - 2, life:1, s:2+Math.random()*4, c:colors[i%4]});
+  }
+  const t0 = performance.now();
+  (function frame(now){
+    c.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p=>{
+      p.x += p.vx; p.y += p.vy; p.vy += 0.25; p.life -= 0.02;
+      if(p.life > 0){
+        c.globalAlpha = Math.max(0, p.life);
+        c.fillStyle = p.c;
+        c.fillRect(p.x, p.y, p.s, p.s);
+      }
+    });
+    c.globalAlpha = 1;
+    if(now - t0 < 1300) requestAnimationFrame(frame);
+    else cv.style.display = 'none';
+  })(t0);
+}
+
+function confetti(){
+  if(reduceMotion) return;
+  const cv = $('fx');
+  cv.width = innerWidth; cv.height = innerHeight;
+  cv.style.display = 'block';
+  const c = cv.getContext('2d');
+  const colors = ['#f2b632','#ffd166','#43c476','#7fe0a8','#eee7d7'];
+  const parts = [];
+  for(let i=0;i<160;i++){
+    parts.push({
+      x:Math.random()*cv.width, y:-20 - Math.random()*cv.height*0.6,
+      vy:2 + Math.random()*3.6, vx:(Math.random()-0.5)*1.6,
+      s:5 + Math.random()*6, c:colors[i%5],
+      r:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.22
+    });
+  }
+  const t0 = performance.now();
+  (function frame(now){
+    c.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p=>{
+      p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      c.save(); c.translate(p.x,p.y); c.rotate(p.r);
+      c.fillStyle = p.c; c.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.62);
+      c.restore();
+    });
+    if(now - t0 < 3600) requestAnimationFrame(frame);
+    else cv.style.display = 'none';
+  })(t0);
+}
+</script>
+</body>
+</html>
