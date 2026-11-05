@@ -312,9 +312,6 @@
     #hud-progress{text-align:left;}
     .modal{padding:20px 18px 18px;}
   }
-  @media (prefers-reduced-motion:reduce){
-    *{animation-duration:.001s !important; transition-duration:.001s !important;}
-  }
 </style>
 
 <div class="wrap">
@@ -669,7 +666,8 @@ const state = {
 };
 
 const $ = id => document.getElementById(id);
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* เอฟเฟกต์เต็มเสมอ (ไม่ตามการตั้งค่า "ลดการเคลื่อนไหว" ของระบบ) เพราะจังหวะลุ้นเป็นส่วนหนึ่งของเกม */
+const reduceMotion = false;
 
 function shuffle(arr){
   const a = arr.slice();
