@@ -343,10 +343,11 @@
     </svg>
     <p class="eyebrow">Mission Briefing</p>
     <h1 class="title">กู้ระเบิด<span class="hl">พุทธประวัติ</span>หรรษา</h1>
-    <p class="subtitle">ตอบคำถามพุทธประวัติและอริยสาวกให้ถูก เพื่อเปิดฝานิรภัยทั้ง 12 ช่อง<br>แต่ระวัง! มีระเบิดซ่อนอยู่ 2 ลูก… เปิดเจอเมื่อไหร่ ภารกิจจบทันที</p>
+    <p class="subtitle">ตอบคำถามพุทธประวัติและอริยสาวกให้ถูก เพื่อเปิดฝานิรภัยทั้ง 12 ช่อง<br>แต่ระวัง! มีระเบิดซ่อนอยู่ 1 ลูก… เปิดเจอเมื่อไหร่ ภารกิจจบทันที</p>
 
     <p class="field-label">⏱ เลือกเวลากู้ระเบิด</p>
     <div class="seg" id="time-seg" role="group" aria-label="เลือกเวลากู้ระเบิด">
+      <button data-min="1">1 นาที</button>
       <button data-min="3">3 นาที</button>
       <button data-min="5" class="on">5 นาที</button>
       <button data-min="8">8 นาที</button>
@@ -372,7 +373,7 @@
       </div>
       <div class="hud-cell" id="hud-progress">
         <div class="hud-label">กู้สำเร็จ</div>
-        <div class="hud-value"><span id="defused">0</span><span class="unit">/10 ช่อง</span></div>
+        <div class="hud-value"><span id="defused">0</span><span class="unit">/11 ช่อง</span></div>
       </div>
     </div>
     <div class="grid" id="grid"></div>
@@ -385,14 +386,14 @@
     <span class="modal-tag">RULES</span>
     <h2 id="rules-title">กติกาของเกม</h2>
     <ol class="rules">
-      <li>มีฝานิรภัยทั้งหมด <b>12 ช่อง</b> — ปลอดภัย 10 ช่อง และมี<b>ระเบิดซ่อนอยู่ 2 ลูก</b> (สุ่มตำแหน่งทุกเกม)</li>
+      <li>มีฝานิรภัยทั้งหมด <b>12 ช่อง</b> — ปลอดภัย 11 ช่อง และมี<b>ระเบิดซ่อนอยู่ 1 ลูก</b> (สุ่มตำแหน่งทุกเกม)</li>
       <li>กดเลือกช่องใดก็ได้ จะมี<b>คำถามพุทธประวัติ</b>ขึ้นมาให้ตอบ</li>
       <li><b>ตอบถูก</b> → ฝาช่องจะเปิดออก… ลุ้นว่าข้างในคืออะไร!
         <br>ถ้าเป็นช่องปลอดภัย (สีเขียว) รับไปเลย <b>+5 คะแนน</b></li>
       <li><b>ตอบผิด</b> → ฝาช่องไม่เปิด เสียโอกาสไปหนึ่งครั้ง เลือกช่องใหม่ได้เลย</li>
       <li>ถ้าเปิดเจอ<b>ระเบิด</b> 💥 เกมจบทันที!</li>
       <li>ถ้า<b>เวลาหมด</b> ระเบิดที่เหลือจะระเบิดเอง เกมจบเช่นกัน</li>
-      <li><b>ชนะ</b> เมื่อกู้ครบทั้ง 10 ช่องปลอดภัย (50 คะแนนเต็ม)
+      <li><b>ชนะ</b> เมื่อกู้ครบทั้ง 11 ช่องปลอดภัย (55 คะแนนเต็ม)
         <br>ถ้าเล่นแข่งกันหลายคน ใครสะสมคะแนนได้มากที่สุดเป็นผู้ชนะ</li>
     </ol>
     <div class="modal-close-row">
@@ -422,7 +423,7 @@
       <div class="cap">คะแนนรวม</div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="k">กู้สำเร็จ</div><div class="v" id="end-defused">0/10 ช่อง</div></div>
+      <div class="stat"><div class="k">กู้สำเร็จ</div><div class="v" id="end-defused">0/11 ช่อง</div></div>
       <div class="stat"><div class="k">เวลาที่ใช้</div><div class="v" id="end-time">0:00</div></div>
     </div>
     <div class="end-actions">
@@ -485,20 +486,17 @@ const AudioFX = {
     const AC = window.AudioContext || window.webkitAudioContext;
     if(!AC) return;
     this.ctx = new AC();
-    const comp = this.ctx.createDynamicsCompressor();
-    comp.threshold.value = -14; comp.knee.value = 20; comp.ratio.value = 6;
-    comp.connect(this.ctx.destination);
     this.master = this.ctx.createGain();
-    this.master.gain.value = this.muted ? 0 : 1.6;
-    this.master.connect(comp);
+    this.master.gain.value = this.muted ? 0 : 0.9;
+    this.master.connect(this.ctx.destination);
     this.musicGain = this.ctx.createGain();
-    this.musicGain.gain.value = 0.45;
+    this.musicGain.gain.value = 0.20;
     this.musicGain.connect(this.master);
   },
   resume(){ this.init(); if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
   setMuted(m){
     this.muted = m;
-    if(this.master) this.master.gain.value = m ? 0 : 1.6;
+    if(this.master) this.master.gain.value = m ? 0 : 0.9;
   },
 
   tone(freq, dur, type, gain, when, dest, slideTo){
@@ -545,32 +543,32 @@ const AudioFX = {
   },
 
   /* ---- one-shot effects ---- */
-  click(){ this.tone(760, 0.06, 'triangle', 0.35, 0); this.tone(1240, 0.045, 'sine', 0.15, 0.012); },
+  click(){ this.tone(760, 0.06, 'triangle', 0.16); this.tone(1240, 0.045, 'sine', 0.07, 0.012); },
   correct(){
-    [523.25, 659.25, 783.99].forEach((f,i)=> this.tone(f, 0.34, 'triangle', 0.5, i*0.09));
-    this.tone(1567.98, 0.5, 'sine', 0.22, 0.28);
+    [523.25, 659.25, 783.99].forEach((f,i)=> this.tone(f, 0.34, 'triangle', 0.24, i*0.09));
+    this.tone(1567.98, 0.5, 'sine', 0.1, 0.28);
   },
   wrong(){
-    this.tone(146, 0.34, 'square', 0.45);
-    this.tone(103, 0.4, 'square', 0.38, 0.03);
-    this.noiseBurst(0.18, 0.12, 900, 200, 0);
+    this.tone(146, 0.34, 'square', 0.22);
+    this.tone(103, 0.4, 'square', 0.18, 0.03);
+    this.noiseBurst(0.18, 0.05, 900, 200, 0);
   },
   drumroll(dur){
     if(!this.ctx) return;
     let t = 0, iv = 0.13;
     while(t < dur){
-      this.tick(t, 0.22, 1300 + Math.random()*500);
-      this.tick(t + 0.012, 0.09, 700);
+      this.tick(t, 0.1, 1300 + Math.random()*500);
+      this.tick(t + 0.012, 0.04, 700);
       t += iv;
       iv = Math.max(0.038, iv * 0.9);
     }
-    this.tone(90, dur, 'sawtooth', 0.1, 0, this.master, 190);
+    this.tone(90, dur, 'sawtooth', 0.05, 0, this.master, 190);
   },
   relief(){
-    this.noiseBurst(0.55, 0.2, 3200, 350, 0);
-    this.tone(392, 0.5, 'sine', 0.35, 0.18);
-    this.tone(523.25, 0.75, 'sine', 0.4, 0.34);
-    this.tone(659.25, 0.9, 'sine', 0.25, 0.5);
+    this.noiseBurst(0.55, 0.09, 3200, 350, 0);
+    this.tone(392, 0.5, 'sine', 0.18, 0.18);
+    this.tone(523.25, 0.75, 'sine', 0.2, 0.34);
+    this.tone(659.25, 0.9, 'sine', 0.12, 0.5);
   },
   explosion(){
     this.noiseBurst(1.4, 0.95, 7500, 55, 0);
@@ -580,9 +578,9 @@ const AudioFX = {
   },
   fanfare(){
     const seq = [[523.25,0],[659.25,.13],[783.99,.26],[1046.5,.42]];
-    seq.forEach(([f,d])=> this.tone(f, 0.42, 'triangle', 0.45, d));
-    [523.25,659.25,783.99,1046.5].forEach(f=> this.tone(f, 1.15, 'sine', 0.2, 0.62));
-    this.tick(0.62, 0.15, 2400);
+    seq.forEach(([f,d])=> this.tone(f, 0.42, 'triangle', 0.24, d));
+    [523.25,659.25,783.99,1046.5].forEach(f=> this.tone(f, 1.15, 'sine', 0.1, 0.62));
+    this.tick(0.62, 0.08, 2400);
   },
 
   /* ---- tense background loop ---- */
@@ -656,7 +654,7 @@ const END_ICONS = {
 };
 
 /* ---------------- Game state ---------------- */
-const TILE_COUNT = 12, BOMB_COUNT = 2, POINTS = 5;
+const TILE_COUNT = 12, BOMB_COUNT = 1, POINTS = 5;
 const SAFE_TOTAL = TILE_COUNT - BOMB_COUNT;
 
 const state = {
